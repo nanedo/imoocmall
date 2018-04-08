@@ -53,3 +53,10 @@
         }
     }
 </script>
+
+<style>
+.confirm-tips ul{
+  width: 100%;
+}
+</style>
+
