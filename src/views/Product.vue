@@ -1,7 +1,7 @@
 <template>
   <div>
       <header-component></header-component>
-      <nav-bread>Goods</nav-bread>
+      <nav-bread>商品详情</nav-bread>
       <div class="accessory-result-page accessory-page">
         <div class="container">
             <h1>{{ ptitle }}</h1>

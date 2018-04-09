@@ -4,23 +4,22 @@
     <div class="footer__secondary">
       <div class="footer__inner">
         <div class="footer__region">
-          <span>Region</span>
+          <span>语言</span>
           <select class="footer__region__select">
-            <option value="en-US">USA</option>
-            <option value="zh-CN">China</option>
-            <option value="in">India</option>
+            <option value="en-US">English</option>
+            <option value="zh-CN">中文</option>
           </select>
         </div>
         <div class="footer__secondary__nav">
-          <span>Copyright © 2017 IMooc All Rights Reserved.</span>
-          <a href="http://us.lemall.com/us/aboutUs.html">
-            About Us
+          <span>Copyright Â© 2017 IMooc All Rights Reserved.</span>
+          <a href="#">
+            关于我们
           </a>
-          <a href="http://us.lemall.com/us/termsofUse.html">
-            Terms &amp; Conditions
+          <a href="#">
+            条款 &amp; 合作
           </a>
-          <a href="http://us.lemall.com/us/privacyPolicy.html">
-            Privacy Policy
+          <a href="#">
+            版权声明
           </a>
         </div>
       </div>

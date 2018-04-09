@@ -27,6 +27,7 @@
     </div>
     <div class="navbar-right-container" style="display: flex;">
       <div class="navbar-menu-container">
+        <iframe src="https://ghbtns.com/github-btn.html?user=nanedo&repo=imoocmall&type=watch&count=false&size=large" frameborder="0" scrolling="0" width="100px" height="30px"></iframe>
         <a href="#" class="navbar-link" v-if="nickName">{{ nickName }} 的账户</a>
         <span class="navbar-link"></span>
         <a href="javascript:void(0)" class="navbar-link" v-if="!nickName" @click="loginModalFlag=true">登录</a>
@@ -43,7 +44,7 @@
       </div>
     </div>
   </div>
-  <Modal :mdShow="loginModalFlag" @close="closeLoginModal" mdTitle="Login in" :hideClose="hideClose" :clickBgClose="clickBgClose">
+  <Modal :mdShow="loginModalFlag" @close="closeLoginModal" mdTitle="登 录" :hideClose="hideClose" :clickBgClose="clickBgClose">
       <template slot="message">
           <div class="error-wrap">
                 <span class="error error-show" v-show="errorTip">用户名或者密码错误</span>
@@ -51,11 +52,11 @@
             <ul>
                 <li class="regi_form_input">
                 <i class="icon IconPeople"></i>
-                <input type="text" tabindex="1" name="loginname" v-model="userName" class="regi_login_input regi_login_input_left" placeholder="User Name" data-type="loginname" v-focus>
+                <input type="text" tabindex="1" name="loginname" v-model="userName" class="regi_login_input regi_login_input_left" placeholder="请输入用户名" data-type="loginname" v-focus>
                 </li>
                 <li class="regi_form_input noMargin">
                 <i class="icon IconPwd"></i>
-                <input type="password" tabindex="2"  name="password" v-model="userPwd" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="Password" @keyup.enter="login">
+                <input type="password" tabindex="2"  name="password" v-model="userPwd" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="请输入密码" @keyup.enter="login">
                 </li>
             </ul>
       </template>

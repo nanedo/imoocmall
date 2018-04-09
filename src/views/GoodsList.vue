@@ -1,21 +1,21 @@
 <template>
   <div>
       <header-component></header-component>
-      <nav-bread>Goods</nav-bread>
+      <nav-bread>商品列表</nav-bread>
       <div class="accessory-result-page accessory-page">
   <div class="container">
     <div class="filter-nav">
-      <span class="sortby">Sort by:</span>
-      <a href="javascript:void(0)" class="default" @click="sortGoods('default')" :class="{cur: !isSortPrice}">Default</a>
-      <a href="javascript:void(0)" :class="{'sort-up': sortFlag, cur: isSortPrice}" @click="sortGoods()" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
-      <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">Filter by</a>
+      <span class="sortby">排序:</span>
+      <a href="javascript:void(0)" class="default" @click="sortGoods('default')" :class="{cur: !isSortPrice}">默认</a>
+      <a href="javascript:void(0)" :class="{'sort-up': sortFlag, cur: isSortPrice}" @click="sortGoods()" class="price">价格 <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+      <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">筛选</a>
     </div>
     <div class="accessory-result">
       <!-- filter -->
       <div class="filter stopPop" id="filter" :class="{'filterby-show': filterBy}">
         <dl class="filter-price">
-          <dt>Price:</dt>
-          <dd><a href="javascript:void(0)" :class="{cur: 'all' ===priceChecked}" @click="setPriceFilter('all')">All</a></dd>
+          <dt>价格:</dt>
+          <dd><a href="javascript:void(0)" :class="{cur: 'all' ===priceChecked}" @click="setPriceFilter('all')">全部</a></dd>
           <dd v-for="(item, index) in priceFilter" :key="index">
             <a href="javascript:void(0)" :class="{cur: index===priceChecked}" @click="setPriceFilter(index)">{{ item.startPrice }} - {{ item.endPrice }}</a>
           </dd>
