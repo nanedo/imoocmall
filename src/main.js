@@ -20,10 +20,10 @@ Vue.config.productionTip = false
 // 请求配置拦截
 let axiosInstance = axios.create()
 axiosInstance.interceptors.response.use((res) => {
-  let data = res.data;
+  // let data = res.data
   // 不同接口的未登录状态需要不同的处理方式，怎么统一处理，差异化使用？
- /*  if(data.status === '2'){
-    
+  /*  if(data.status === '2'){
+
     console.log('interceptors: 1')
     eventBus.$emit('unLogin')
   } */

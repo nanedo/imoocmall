@@ -173,19 +173,19 @@ import {eventBus} from '../eventBus'
 
 export default {
   components: {
-      HeaderComponent,
-      FooterComponent,
-      NavBread,
-      Modal
+    HeaderComponent,
+    FooterComponent,
+    NavBread,
+    Modal
   },
   data () {
     return {
-      limit:3,
-      checkIndex:0,
-      selectedAddrId:'',
-      addressList:[],
-      isMdShow:false,
-      addressId:'',
+      limit: 3,
+      checkIndex: 0,
+      selectedAddrId: '',
+      addressList: [],
+      isMdShow: false,
+      addressId: '',
       newAddress: {
         userName: '',
         streetName: '',
@@ -196,8 +196,8 @@ export default {
       errorTip: ''
     }
   },
-  computed:{
-    addressListFilter(){
+  computed: {
+    addressListFilter () {
       return this.addressList.slice(0, this.limit)
     }
   },
@@ -207,24 +207,24 @@ export default {
   methods: {
     init () {
       this.$http.post('/api/users/addressList')
-      .then((res) => {
-        let data = res.data
-        if(data.status === '0'){
-          this.addressList = data.result
-          this.selectedAddrId = this.addressList[0].addressId
-        } else if(data.status === '2'){
-          eventBus.$emit('unLogin', () => {
-            this.init()
-          }, {
+        .then((res) => {
+          let data = res.data
+          if (data.status === '0') {
+            this.addressList = data.result
+            this.selectedAddrId = this.addressList[0].addressId
+          } else if (data.status === '2') {
+            eventBus.$emit('unLogin', () => {
+              this.init()
+            }, {
               clickBgClose: false,
               hideClose: true
-          })
-        } else {
-          eventBus.$emit('showMsg', data.msg)
-        }
-      }, (err) => {
-        eventBus.$emit('showMsg', err)
-      })
+            })
+          } else {
+            eventBus.$emit('showMsg', data.msg)
+          }
+        }, (err) => {
+          eventBus.$emit('showMsg', err)
+        })
     },
     closeModal () {
       this.isMdShow = false
@@ -235,7 +235,7 @@ export default {
         addressId: this.addressId
       }).then((res) => {
         let data = res.data
-        if(data.status === '0'){
+        if (data.status === '0') {
           this.closeModal()
           this.init()
         }
@@ -246,7 +246,7 @@ export default {
       this.$http.post('/api/users/setDefault', {
         addressId
       }).then((res) => {
-        if(res.data.status==='0'){
+        if (res.data.status === '0') {
           this.init()
         }
       }, err => eventBus.$emit('showMsg', err))
@@ -264,7 +264,6 @@ export default {
     },
     addressMdShow () {
       this.addAddressMdShow = true
-      
     },
     addAddress () {
       let userName = this.newAddress.userName
@@ -272,7 +271,7 @@ export default {
       let tel = this.newAddress.tel
       let postCode = this.newAddress.postCode
 
-      if(!userName||!streetName||!tel){
+      if (!userName || !streetName || !tel) {
         this.errorTip = '缺少必要的信息，请补充完整'
       } else {
         this.$http.post('/api/users/addAddress', {
@@ -281,14 +280,13 @@ export default {
           tel,
           postCode
         }).then((res) => {
-          if(res.data.status === '0'){
+          if (res.data.status === '0') {
             this.closeAddModal()
             eventBus.$emit('showMsg', res.data.msg)
             this.init()
           } else {
             this.errorTip = res.data.msg
           }
-          
         }, err => eventBus.$emit('showMsg', err))
       }
     }

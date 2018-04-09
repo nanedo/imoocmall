@@ -120,7 +120,7 @@
                     <div class="cart-foot-r">
                        <div class="item-total">
                             Item total: <span class="total-price">{{totalPrice | currency('¥') }}</span>
-                        </div> 
+                        </div>
                     </div>
                     <div class="btn-wrap">
                         <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount==0}" @click="checkOut">Checkout</a>
@@ -129,8 +129,7 @@
             </div>
         </div>
     </div>
-    
-    
+
     <Modal :mdShow="modalConfirm" @close="closeModal">
       <p slot="message">你确认要删除此条数据吗?</p>
       <div slot="btnGroup">
@@ -152,129 +151,127 @@ import Modal from '../components/base/Modal'
 import {eventBus} from '../eventBus'
 export default {
   components: {
-      HeaderComponent,
-      FooterComponent,
-      NavBread,
-      AddCartButton,
-      Modal
+    HeaderComponent,
+    FooterComponent,
+    NavBread,
+    AddCartButton,
+    Modal
   },
-  data ()  {
-      return {
-          modalConfirm: false,
-          cartList: [],
-          delItem: {},
-          delIndex: -1
-      }
+  data () {
+    return {
+      modalConfirm: false,
+      cartList: [],
+      delItem: {},
+      delIndex: -1
+    }
   },
   computed: {
-      totalPrice () {
-          let total = 0
-          this.cartList.forEach((item) => {
-              if(item.checked === "1"){
-                  total += item.salePrice * item.productNum
-              }
-          })
-          return total
-      },
-      checkedCount () {
-          let count = 0
-          this.cartList.forEach((item) => {
-              if(item.checked==="1"){
-                  count++
-              }
-          })
-          return count
-      },
-      checkAllFlag () {
-          // 检查勾选的是否跟列表数量相等
-          return this.checkedCount === this.cartList.length
-      }
+    totalPrice () {
+      let total = 0
+      this.cartList.forEach((item) => {
+        if (item.checked === '1') {
+          total += item.salePrice * item.productNum
+        }
+      })
+      return total
+    },
+    checkedCount () {
+      let count = 0
+      this.cartList.forEach((item) => {
+        if (item.checked === '1') {
+          count++
+        }
+      })
+      return count
+    },
+    checkAllFlag () {
+      // 检查勾选的是否跟列表数量相等
+      return this.checkedCount === this.cartList.length
+    }
   },
   mounted () {
-      this.inited()
+    this.inited()
   },
   methods: {
-      inited () {
-          this.$http.get('/api/users/cartList').then((res) => {
-              if(res.data.status === '0'){
-                  this.cartList = res.data.result
-              } else if(res.data.status === "2") {
-                  // 未登录时，弹出登录框
-                  eventBus.$emit('unLogin', () => {
-                      this.inited()
-                  }, {
-                      clickBgClose: false,
-                      hideClose: true
-                  })
-              } else {
-                  eventBus.$emit('showMsg', res.data.msg)
-              }
-          }, err => eventBus.$emit('showMsg', err))
-      },
-      closeModal () {
-          this.modalConfirm = false
-      },
-      delCart () {
-          // 避免操作索引错误
-          if(this.delIndex>-1 && this.delIndex<this.cartList.length) {
-              this.cartList.splice(this.delIndex, 1)
-              this.updateCart()
-              this.modalConfirm = false
-          }
-      },
-      checkOut () {
-          if(this.checkedCount > 0) {
-            this.$router.push({
-                path: '/address'
-            })
-          }
-          
-      },
-      toggleCheckAll () {
-          let flag = !this.checkAllFlag
-          this.cartList.forEach((item) => {
-              item.checked = flag ? '1' :'0'
-          })
-          
-      },
-      updateCart (isFetchOnline) {
-          // 从服务器上同步数据到页面
-          if(isFetchOnline) {
+    inited () {
+      this.$http.get('/api/users/cartList').then((res) => {
+        if (res.data.status === '0') {
+          this.cartList = res.data.result
+        } else if (res.data.status === '2') {
+          // 未登录时，弹出登录框
+          eventBus.$emit('unLogin', () => {
             this.inited()
-          } else {
-          // 将页面操作同步到服务器
-          // 简化操作，直接全量更新
-            this.$http.post('/api/users/cartEdit', {
-                cartList: this.cartList
-            }).then((res) => {
-                let data = res.data
-                if(data.status === '0'){
-                    this.$store.dispatch('fetchCartCount')
-                } else {
-                    eventBus.$emit('showMsg', data.msg)
-                }
-            }, err => eventBus.$emit('showMsg', err))
-          }
-      },
-      editCart (type, item) {
-          switch(type){
-              case 'checked':
-                item.checked = item.checked === '1' ? '0' : '1'
-                break;
-              case 'minu':
-                item.productNum = Math.max(0, item.productNum-1)
-                break;
-              case 'add':
-                item.productNum++
-                break;
-          }
-
-          this.updateCart()
-      },
-      delCartConfirm (index) {
-          this.modalConfirm = true
-          this.delIndex = index
+          }, {
+            clickBgClose: false,
+            hideClose: true
+          })
+        } else {
+          eventBus.$emit('showMsg', res.data.msg)
+        }
+      }, err => eventBus.$emit('showMsg', err))
+    },
+    closeModal () {
+      this.modalConfirm = false
+    },
+    delCart () {
+      // 避免操作索引错误
+      if (this.delIndex > -1 && this.delIndex < this.cartList.length) {
+        this.cartList.splice(this.delIndex, 1)
+        this.updateCart()
+        this.modalConfirm = false
       }
+    },
+    checkOut () {
+      if (this.checkedCount > 0) {
+        this.$router.push({
+          path: '/address'
+        })
+      }
+    },
+    toggleCheckAll () {
+      let flag = !this.checkAllFlag
+      this.cartList.forEach((item) => {
+        item.checked = flag ? '1' : '0'
+      })
+    },
+    updateCart (isFetchOnline) {
+      // 从服务器上同步数据到页面
+      if (isFetchOnline) {
+        this.inited()
+      } else {
+        // 将页面操作同步到服务器
+        // 简化操作，直接全量更新
+        this.$http.post('/api/users/cartEdit', {
+          cartList: this.cartList
+        }).then((res) => {
+          let data = res.data
+          if (data.status === '0') {
+            this.$store.dispatch('fetchCartCount')
+          } else {
+            eventBus.$emit('showMsg', data.msg)
+          }
+        }, err => eventBus.$emit('showMsg', err))
+      }
+    },
+    editCart (type, item) {
+      switch (type) {
+        case 'checked':
+          item.checked = item.checked === '1' ? '0' : '1'
+          break
+        case 'minu':
+          item.productNum = Math.max(0, item.productNum - 1)
+          break
+        case 'add':
+          item.productNum++
+          break
+      }
+
+      this.updateCart()
+    },
+    delCartConfirm (index) {
+      this.modalConfirm = true
+      this.delIndex = index
+    }
   }
 }
 </script>

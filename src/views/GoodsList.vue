@@ -66,131 +66,128 @@ import {eventBus} from '../eventBus'
 
 export default {
   components: {
-      HeaderComponent,
-      FooterComponent,
-      NavBread,
-      Modal,
-      AddCartButton
+    HeaderComponent,
+    FooterComponent,
+    NavBread,
+    Modal,
+    AddCartButton
   },
   data () {
-      return {
-          page: 1,
-          pageSize: 8,
-          busy: true,
-          loading: false,
-          mdShow: false,
-          mdShowCart: false,
-          goodsList: [],
-          priceFilter: [],
-          priceChecked: "all",
-          filterBy: false,
-          overLayFlag: false,
-          sortFlag: false,
-          isSortPrice: false
-      }
+    return {
+      page: 1,
+      pageSize: 8,
+      busy: true,
+      loading: false,
+      mdShow: false,
+      mdShowCart: false,
+      goodsList: [],
+      priceFilter: [],
+      priceChecked: 'all',
+      filterBy: false,
+      overLayFlag: false,
+      sortFlag: false,
+      isSortPrice: false
+    }
   },
   mounted () {
-      this.getPriceList()
-      this.getGoodList()
+    this.getPriceList()
+    this.getGoodList()
   },
   methods: {
-      getPriceList () {
-          this.$http.get('/api/prices').then((res) => {
-              if(res.data.status === '0'){
-                  this.priceFilter = res.data.list
-              }
-          }, (err) => {
-              eventBus.$emit('showMsg',`get prices error: ${err}`)
-          })
-          
-      },
-      getGoodList () {
-          let param = {
-              page: this.page,
-              pageSize: this.pageSize,
-              priceLevel: this.priceChecked
-          }
-          if(this.isSortPrice){
-              param.sort = this.sortFlag ? 1 : -1
-          }
-          this.loading = true
-          this.$http.get('/api/goods/list', {params:param}).then((res) => {
-              this.loading = false
-              if(res.data.status === "0"){
-                  if(res.data.result.count){
-                      this.busy = res.data.result.count < this.pageSize ? true : false
-                      if(this.page===1){
-                          this.goodsList = res.data.result.list
-                      }else{
-                          this.goodsList = this.goodsList.concat(res.data.result.list)
-                      }
-                      
-                  }else{
-                      this.busy = true
-                  }
-              } else {
-                  this.goodsList = []
-              }
-          }, (err) => {
-              eventBus.$emit('showMsg',`get goods error: ${err}`)
-          })
-      },
-      loadMore () {
-        this.busy = true
-        setTimeout(() => {
-            this.page++
-            this.getGoodList()
-        }, 500)
-      },
-      setPriceFilter (type) {
-          this.priceChecked = type
-          this.closePop()
-          this.page = 1
-          this.getGoodList()
-      },
-      sortGoods (flag) {
-          if(flag){
-              this.isSortPrice = false
-          }else{
-              this.isSortPrice = true
-              this.sortFlag = !this.sortFlag
-          }
-          this.page = 1
-          this.getGoodList()
-      },
-      addCart (productId) {
-          // 直接请求后台，如果返回未登录状态则调用登录框
-          this.$http.post('/api/goods/addCart', {
-              productId
-          }).then((res) => {
-              let data = res.data
-              if(data.status === '0'){
-                  // 添加成功
-                  eventBus.$emit('showMsg','添加成功')
-                  this.$store.dispatch('fetchCartCount')
-              } else if(data.status === '2') {
-                  // 未登录状态，弹出登录框
-                  eventBus.$emit('unLogin', () => {
-                      this.addCart(productId)
-                  })
-                  // 如果需要在弹出登录框后，用户登录成功了，再次执行添加到购物车的操作，则需要传递一个回调给登录框
-              } else {
-                  // 报错
-                  eventBus.$emit('showMsg',`addCart res: ${ res.data.info }`)
-              }
-              
-          }, (err) => {
-              eventBus.$emit('showMsg',`${productId} add Cart error:  ${err}`)
-          })
-      },
-      showFilterPop () {
-          this.overLayFlag = true
-          this.filterBy = true
-      },
-      closePop () {
-          this.overLayFlag = false
-          this.filterBy = false
+    getPriceList () {
+      this.$http.get('/api/prices').then((res) => {
+        if (res.data.status === '0') {
+          this.priceFilter = res.data.list
+        }
+      }, (err) => {
+        eventBus.$emit('showMsg', `get prices error: ${err}`)
+      })
+    },
+    getGoodList () {
+      let param = {
+        page: this.page,
+        pageSize: this.pageSize,
+        priceLevel: this.priceChecked
       }
+      if (this.isSortPrice) {
+        param.sort = this.sortFlag ? 1 : -1
+      }
+      this.loading = true
+      this.$http.get('/api/goods/list', {params: param}).then((res) => {
+        this.loading = false
+        if (res.data.status === '0') {
+          if (res.data.result.count) {
+            this.busy = res.data.result.count < this.pageSize
+            if (this.page === 1) {
+              this.goodsList = res.data.result.list
+            } else {
+              this.goodsList = this.goodsList.concat(res.data.result.list)
+            }
+          } else {
+            this.busy = true
+          }
+        } else {
+          this.goodsList = []
+        }
+      }, (err) => {
+        eventBus.$emit('showMsg', `get goods error: ${err}`)
+      })
+    },
+    loadMore () {
+      this.busy = true
+      setTimeout(() => {
+        this.page++
+        this.getGoodList()
+      }, 500)
+    },
+    setPriceFilter (type) {
+      this.priceChecked = type
+      this.closePop()
+      this.page = 1
+      this.getGoodList()
+    },
+    sortGoods (flag) {
+      if (flag) {
+        this.isSortPrice = false
+      } else {
+        this.isSortPrice = true
+        this.sortFlag = !this.sortFlag
+      }
+      this.page = 1
+      this.getGoodList()
+    },
+    addCart (productId) {
+      // 直接请求后台，如果返回未登录状态则调用登录框
+      this.$http.post('/api/goods/addCart', {
+        productId
+      }).then((res) => {
+        let data = res.data
+        if (data.status === '0') {
+          // 添加成功
+          eventBus.$emit('showMsg', '添加成功')
+          this.$store.dispatch('fetchCartCount')
+        } else if (data.status === '2') {
+          // 未登录状态，弹出登录框
+          eventBus.$emit('unLogin', () => {
+            this.addCart(productId)
+          })
+          // 如果需要在弹出登录框后，用户登录成功了，再次执行添加到购物车的操作，则需要传递一个回调给登录框
+        } else {
+          // 报错
+          eventBus.$emit('showMsg', `addCart res: ${res.data.info}`)
+        }
+      }, (err) => {
+        eventBus.$emit('showMsg', `${productId} add Cart error:  ${err}`)
+      })
+    },
+    showFilterPop () {
+      this.overLayFlag = true
+      this.filterBy = true
+    },
+    closePop () {
+      this.overLayFlag = false
+      this.filterBy = false
+    }
   }
 }
 </script>

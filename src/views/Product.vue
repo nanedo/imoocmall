@@ -13,13 +13,13 @@
                     <template v-else>
                         <img :src="'/static/'+val" />
                     </template>
-                    
+
                 </li>
                 <li>
                     <AddCartButton :productId="productId" :stock="stock"></AddCartButton>
                 </li>
             </ul>
-            
+
         </div>
       </div>
       <footer-component />
@@ -35,38 +35,37 @@ import {eventBus} from '../eventBus'
 
 export default {
   components: {
-      HeaderComponent,
-      FooterComponent,
-      NavBread,
-      AddCartButton
+    HeaderComponent,
+    FooterComponent,
+    NavBread,
+    AddCartButton
   },
   data () {
-      return {
-          ptitle: '',
-          productId: '',
-          pidInfo: [],
-          stock: 0
-      }
+    return {
+      ptitle: '',
+      productId: '',
+      pidInfo: [],
+      stock: 0
+    }
   },
   mounted () {
-      this.getProductInfo()
+    this.getProductInfo()
   },
   methods: {
-      getProductInfo () {
-          let pid = this.$route.params.pid
-          this.productId = pid
-          this.$http.get('/api/goods/detail/'+pid).then((res) => {
-              let data = res.data
-              if(data.status === '0'){
-                  this.ptitle = data.result.name
-                  this.stock = data.result.stock
-                  this.pidInfo.push(data.result)
-
-              } else {
-                  eventBus.$emit('showMsg', data.msg)
-              }
-          }, err => eventBus.$emit(`pid err: ${err}`))
-      }
+    getProductInfo () {
+      let pid = this.$route.params.pid
+      this.productId = pid
+      this.$http.get('/api/goods/detail/' + pid).then((res) => {
+        let data = res.data
+        if (data.status === '0') {
+          this.ptitle = data.result.name
+          this.stock = data.result.stock
+          this.pidInfo.push(data.result)
+        } else {
+          eventBus.$emit('showMsg', data.msg)
+        }
+      }, err => eventBus.$emit(`pid err: ${err}`))
+    }
   }
 }
 </script>

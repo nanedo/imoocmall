@@ -135,72 +135,71 @@ import {eventBus} from '../eventBus'
 
 export default {
   components: {
-      HeaderComponent,
-      FooterComponent,
-      NavBread
+    HeaderComponent,
+    FooterComponent,
+    NavBread
   },
-  data() {
-      return {
-          cartList: [],
-          subTotal:0,
-          shipping:100,
-          discount:200,
-          tax:400
-      }
+  data () {
+    return {
+      cartList: [],
+      subTotal: 0,
+      shipping: 100,
+      discount: 200,
+      tax: 400
+    }
   },
   computed: {
-      orderTotal () {
-          return this.subTotal+this.shipping-this.discount+this.tax
-      }
+    orderTotal () {
+      return this.subTotal + this.shipping - this.discount + this.tax
+    }
   },
   mounted () {
-      this.init()
+    this.init()
   },
   methods: {
     init () {
       this.$http.get('/api/users/cartList')
-      .then((res) => {
-        let data = res.data
-        if(data.status === '0'){
-          this.cartList = data.result
-          this.cartList.forEach((item) => {
-              if(item.checked === '1'){
-                  this.subTotal += item.salePrice*item.productNum
+        .then((res) => {
+          let data = res.data
+          if (data.status === '0') {
+            this.cartList = data.result
+            this.cartList.forEach((item) => {
+              if (item.checked === '1') {
+                this.subTotal += item.salePrice * item.productNum
               }
-          })
-
-        } else if(data.status === '2'){
-          eventBus.$emit('unLogin', () => {
-            this.init()
-          }, {
-            clickBgClose: false,
-            hideClose: true
-          })
-        } else {
-          eventBus.$emit('showMsg', data.msg)
-        }
-      }, (err) => {
-        eventBus.$emit('showMsg', err)
-      })
+            })
+          } else if (data.status === '2') {
+            eventBus.$emit('unLogin', () => {
+              this.init()
+            }, {
+              clickBgClose: false,
+              hideClose: true
+            })
+          } else {
+            eventBus.$emit('showMsg', data.msg)
+          }
+        }, (err) => {
+          eventBus.$emit('showMsg', err)
+        })
     },
     payMent () {
-        let addressId = this.$route.query.addressId;
+      let addressId = this.$route.query.addressId
 
-        this.$http.post('/api/users/payMent', {
-            addressId,
-            orderTotal: this.orderTotal
-        }).then((res) => {
-            if(res.data.status === '0'){
-                this.$router.push({
-                    path: '/orderSuccess',
-                    query: {
-                        orderId: res.data.result.orderId
-                    }
-                })
-            } else {
-                eventBus.$emit('showMsg', res.data.msg)
+      this.$http.post('/api/users/payMent', {
+        addressId,
+        orderTotal: this.orderTotal
+      }).then((res) => {
+        if (res.data.status === '0') {
+          this.$router.push({
+            path: '/orderSuccess',
+            query: {
+              orderId: res.data.result.orderId
             }
-        }, err => eventBus.$emit('showMsg', err))
+          })
+        } else {
+          eventBus.$emit('showMsg', res.data.msg)
+        }
+      }, err => eventBus.$emit('showMsg', err))
     }
   }
 }

@@ -35,13 +35,13 @@ export default {
     })
   },
   methods: {
-      showMsgModal (msg) {
-        this.msg = msg
-        this.msgModalFlag = true
-      },
-      closeMsgModal () {
-        this.msgModalFlag = false
-      }
+    showMsgModal (msg) {
+      this.msg = msg
+      this.msgModalFlag = true
+    },
+    closeMsgModal () {
+      this.msgModalFlag = false
+    }
   }
 }
 </script>

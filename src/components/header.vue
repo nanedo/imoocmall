@@ -75,25 +75,25 @@ import './../assets/css/login.css'
 import Modal from './base/Modal'
 import Register from './Register'
 import {eventBus} from '../eventBus'
-import {mapMutations, mapState, mapActions, mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 
 export default {
   components: {
-      Modal,
-      Register
+    Modal,
+    Register
   },
   data () {
-      return {
-          userName: '',
-          userPwd: '',
-          errorTip: false,
-          loginModalFlag: false,
-          msgModalFlag: false,
-          msg: '',
-          hideClose: false,
-          clickBgClose: true,
-          registerModalFlag: false
-      }
+    return {
+      userName: '',
+      userPwd: '',
+      errorTip: false,
+      loginModalFlag: false,
+      msgModalFlag: false,
+      msg: '',
+      hideClose: false,
+      clickBgClose: true,
+      registerModalFlag: false
+    }
   },
   computed: mapGetters({'nickName': 'getNickName', 'cartCount': 'getCartCount'}),
   mounted () {
@@ -103,25 +103,25 @@ export default {
       this.loginModalFlag = true
       // 看看是否有登录后的回调队列，没有则创建
       // 不一起初始化的原因是，这个未必需要响应式
-      if(!this.loginCallbackArr){
+      if (!this.loginCallbackArr) {
         this.loginCallbackArr = [doSomethinAfterLogin]
-      }else {
+      } else {
         this.loginCallbackArr.push(doSomethinAfterLogin)
       }
       // 针对登录框的一些特殊设定
-      if(popConfig){
-        for(let key in popConfig){
+      if (popConfig) {
+        for (let key in popConfig) {
           this[key] = popConfig[key]
         }
       }
     })
     // 登录成功
     eventBus.$on('login', () => {
-      //this.getCartCount()
+      // this.getCartCount()
       this.$store.dispatch('fetchCartCount')
 
       // 如果有需要调用的回调，则拿出来执行
-      if(this.loginCallbackArr && this.loginCallbackArr.length){
+      if (this.loginCallbackArr && this.loginCallbackArr.length) {
         this.loginCallbackArr.forEach((fnItem) => {
           typeof fnItem === 'function' && fnItem()
         })
@@ -134,76 +134,74 @@ export default {
     })
   },
   methods: {
-      closeRegisterModal () {
-        this.registerModalFlag = false
-      },
-      closeMsgModal () {
-        this.msgModalFlag = false
-      },
-      showMsgModal (msg) {
-        this.msg = msg
-        this.msgModalFlag = true
-      },
-      checkLogin () {
-        this.$http.post('/api/users/checkLogin').then((res) => {
-          if(res.data.status === '0'){
-            this.$store.commit('updateUserInfo', res.data.result.userName)
-            this.loginModalFlag = false
-            eventBus.$emit('login')
-          } else {
-            // 如果不在商品列表页，则自动跳转到商品页面
-            if(this.$route.path!="/goods"){
-              //this.$router.push("/goods")
-            }
+    closeRegisterModal () {
+      this.registerModalFlag = false
+    },
+    closeMsgModal () {
+      this.msgModalFlag = false
+    },
+    showMsgModal (msg) {
+      this.msg = msg
+      this.msgModalFlag = true
+    },
+    checkLogin () {
+      this.$http.post('/api/users/checkLogin').then((res) => {
+        if (res.data.status === '0') {
+          this.$store.commit('updateUserInfo', res.data.result.userName)
+          this.loginModalFlag = false
+          eventBus.$emit('login')
+        } else {
+          // 如果不在商品列表页，则自动跳转到商品页面
+          if (this.$route.path !== '/goods') {
+            // this.$router.push("/goods")
           }
-          
-        }, err => this.showMsgModal(`check error: ${err}`))
-      },
-      closeLoginModal () {
-        // 只要关闭登录框，就表示放弃当前操作
-        this.loginCallbackArr = []
-        this.loginModalFlag = false
-      },
-      login () {
-        if(!this.userName || !this.userPwd){
-          this.errorTip = true
-          return
         }
-        this.$http.post('/api/users/login', {
-          userName: this.userName,
-          userPwd: this.userPwd
-        }).then((res) => {
-          res = res.data
-          if(res.status === '0'){
-            this.errorTip = false
-            this.loginModalFlag = false
-            this.$store.commit('updateUserInfo', res.result.userName)
-            eventBus.$emit('login')
-            // this.showMsgModal(res.msg)
-          } else {
-            this.errorTip = true
-          }
-        }, err => this.showMsgModal(`login err: ${err}`))
-      },
-      logOut () {
-        this.$http.post('/api/users/logout').then((res) => {
-          if(res.data.status === '0'){
-            eventBus.$emit('logOut')
-          } else {
-            this.showMsgModal(res.data.msg)
-          }
-          
-        }, err => this.showMsgModal(`logout error:${ err }`))
-      }/* ,
+      }, err => this.showMsgModal(`check error: ${err}`))
+    },
+    closeLoginModal () {
+      // 只要关闭登录框，就表示放弃当前操作
+      this.loginCallbackArr = []
+      this.loginModalFlag = false
+    },
+    login () {
+      if (!this.userName || !this.userPwd) {
+        this.errorTip = true
+        return
+      }
+      this.$http.post('/api/users/login', {
+        userName: this.userName,
+        userPwd: this.userPwd
+      }).then((res) => {
+        res = res.data
+        if (res.status === '0') {
+          this.errorTip = false
+          this.loginModalFlag = false
+          this.$store.commit('updateUserInfo', res.result.userName)
+          eventBus.$emit('login')
+          // this.showMsgModal(res.msg)
+        } else {
+          this.errorTip = true
+        }
+      }, err => this.showMsgModal(`login err: ${err}`))
+    },
+    logOut () {
+      this.$http.post('/api/users/logout').then((res) => {
+        if (res.data.status === '0') {
+          eventBus.$emit('logOut')
+        } else {
+          this.showMsgModal(res.data.msg)
+        }
+      }, err => this.showMsgModal(`logout error:${err}`))
+    }/* ,
       ...mapActions(['fetchCartCount']) */
-      /* getCartCount () {
+    /* getCartCount () {
         this.$http.post('/api/users/getCartCount').then((res) => {
           if(res.data.status === '0'){
             this.cartCount = res.data.result.cartCount
           } else {
-            
+
           }
-          
+
         }, err => this.showMsgModal(`check error: ${err}`))
       } */
   }

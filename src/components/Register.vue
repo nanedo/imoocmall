@@ -24,44 +24,44 @@ import {eventBus} from '../eventBus'
 
 export default {
   props: {
-      isShow: {
-          type: Boolean,
-          default: false
-      }
+    isShow: {
+      type: Boolean,
+      default: false
+    }
   },
-  components:{
-      Modal
+  components: {
+    Modal
   },
   data () {
-      return {
-          userName: '',
-          userPwd: '',
-          errorTip: ''
-      }
+    return {
+      userName: '',
+      userPwd: '',
+      errorTip: ''
+    }
   },
   methods: {
-      closeRegisterModal () {
-          this.$emit('close')
-      },
-      register () {
-        if(!this.userName || !this.userPwd){
-          this.errorTip = '用户名或者密码错误'
-          return
-        }
-        this.$http.post('/api/users/register', {
-          userName: this.userName,
-          userPwd: this.userPwd
-        }).then((res) => {
-          res = res.data
-          if(res.status === '0'){
-            this.errorTip = ''
-            this.$emit('close')
-            eventBus.$emit('showMsg','注册成功~请登录')
-          } else {
-            this.errorTip = res.msg
-          }
-        }, err => eventBus.$emit('showMsg', `register err: ${err}`))
+    closeRegisterModal () {
+      this.$emit('close')
+    },
+    register () {
+      if (!this.userName || !this.userPwd) {
+        this.errorTip = '用户名或者密码错误'
+        return
       }
+      this.$http.post('/api/users/register', {
+        userName: this.userName,
+        userPwd: this.userPwd
+      }).then((res) => {
+        res = res.data
+        if (res.status === '0') {
+          this.errorTip = ''
+          this.$emit('close')
+          eventBus.$emit('showMsg', '注册成功~请登录')
+        } else {
+          this.errorTip = res.msg
+        }
+      }, err => eventBus.$emit('showMsg', `register err: ${err}`))
+    }
   }
 }
 </script>

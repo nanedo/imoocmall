@@ -47,41 +47,41 @@ import {eventBus} from '../eventBus'
 
 export default {
   components: {
-      HeaderComponent,
-      FooterComponent,
-      NavBread
+    HeaderComponent,
+    FooterComponent,
+    NavBread
   },
   data () {
-      return {
-          orderId: '',
-          orderTotal: 0
-      }
+    return {
+      orderId: '',
+      orderTotal: 0
+    }
   },
   mounted () {
-      this.init()
+    this.init()
   },
   methods: {
-      init () {
-        let orderId = this.$route.query.orderId
-        this.$http.post('/api/users/orderDetail', {
-            orderId
-        }).then((res)=>{
-            let data = res.data
-            if(data.status === '0'){
-                this.orderId = orderId
-                this.orderTotal = data.result.orderTotal
-            } else if(data.status === '2'){
-            eventBus.$emit('unLogin', () => {
-                this.init()
-            }, {
-                clickBgClose: false,
-                hideClose: true
-            })
-            } else {
-            eventBus.$emit('showMsg', data.msg)
-            }
-        }, err => eventBus.$emit('showMsg', err))
-      }
+    init () {
+      let orderId = this.$route.query.orderId
+      this.$http.post('/api/users/orderDetail', {
+        orderId
+      }).then((res) => {
+        let data = res.data
+        if (data.status === '0') {
+          this.orderId = orderId
+          this.orderTotal = data.result.orderTotal
+        } else if (data.status === '2') {
+          eventBus.$emit('unLogin', () => {
+            this.init()
+          }, {
+            clickBgClose: false,
+            hideClose: true
+          })
+        } else {
+          eventBus.$emit('showMsg', data.msg)
+        }
+      }, err => eventBus.$emit('showMsg', err))
+    }
   }
 }
 </script>

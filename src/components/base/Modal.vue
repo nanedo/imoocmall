@@ -23,35 +23,35 @@
 
 </style>
 <script>
-    export default{
-        props:{
-          "mdShow": {
-            type: Boolean,
-            default: false
-          },
-          "mdTitle": {
-              type: String,
-              default: ''
-          },
-          "hideClose": {
-            type: Boolean,
-            default: false
-          },
-          "clickBgClose": {
-            type: Boolean,
-            default: true
-          }
-        },
-        data(){
-            return{
-            }
-        },
-        methods:{
-          closeModal(){
-            this.$emit("close");
-          }
-        }
+export default{
+  props: {
+    'mdShow': {
+      type: Boolean,
+      default: false
+    },
+    'mdTitle': {
+      type: String,
+      default: ''
+    },
+    'hideClose': {
+      type: Boolean,
+      default: false
+    },
+    'clickBgClose': {
+      type: Boolean,
+      default: true
     }
+  },
+  data () {
+    return {
+    }
+  },
+  methods: {
+    closeModal () {
+      this.$emit('close')
+    }
+  }
+}
 </script>
 
 <style>
@@ -59,4 +59,3 @@
   width: 100%;
 }
 </style>
-
