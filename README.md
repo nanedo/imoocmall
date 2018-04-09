@@ -4,7 +4,8 @@
 ## 项目内容
 
  - vue基础
- - vue-router使用(实际使用axios)
+ - vue-router使用
+ - vue-resource使用(实际使用axios)
  - vuex使用
  - 使用es6语法
  - 商品列表渲染，懒加载
