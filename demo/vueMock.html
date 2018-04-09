@@ -9,7 +9,8 @@
 <body>
     <input type="text" id="username">
     <br>
-    <span id="uName"></span>
+    <span id="uName"></span><br>
+    <span id="uName2"></span>
     <script>
         //;(() => {
             var obj = {}
@@ -22,8 +23,20 @@
                     console.log('get: ', val)
                 }
             })
+
+            var obj2 = {}
+            var obj3 = new Proxy(obj2, {
+              set (target, key, value) {
+                if(key === 'userName'){
+                  document.getElementById('uName2').innerText = value
+                }
+
+              }
+            })
+
             document.getElementById('username').addEventListener('keyup', (e) => {
                 obj.userName = e.target.value
+                obj3.userName = e.target.value
                 // document.getElementById('uName').innerText = e.target.value
             })
         //})()
