@@ -9,6 +9,7 @@
           <div class="md-content">
             <div class="confirm-tips">
               <slot name="message"></slot>
+              <slot></slot>
             </div>
             <div class="btn-wrap">
               <slot name="btnGroup"></slot>

@@ -1,12 +1,14 @@
 <template>
-  <div class="nav-breadcrumb-wrap">
-    <div class="container">
-        <nav class="nav-breadcrumb">
-        <a href="/">首页</a>
-        <slot></slot>
-        </nav>
-    </div>
-    </div>
+<div class=" mb-3">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">首页</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><slot></slot></li>
+      </ol>
+    </nav>
+  </div>
+</div>
 </template>
 <style>
 .bread{

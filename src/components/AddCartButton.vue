@@ -10,7 +10,7 @@ import {eventBus} from '../eventBus'
 export default {
   props: {
     'productId': {
-      type: String,
+      type: Number,
       required: true
     },
     'stock': {

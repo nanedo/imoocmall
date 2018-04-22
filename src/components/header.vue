@@ -23,16 +23,30 @@
   <div class="navbar">
     <div class="navbar-left-container">
       <a href="/">
-        <img class="navbar-brand-logo" src="/static/logo.jpg"></a>
+        <img class="navbar-brand-logo" src="/static/logo.png"></a>
     </div>
     <div class="navbar-right-container" style="display: flex;">
       <div class="navbar-menu-container">
         <iframe src="https://ghbtns.com/github-btn.html?user=nanedo&repo=imoocmall&type=watch&count=false&size=large" frameborder="0" scrolling="0" width="100px" height="30px"></iframe>
-        <a href="#" class="navbar-link" v-if="nickName">{{ nickName }} 的账户</a>
+
+        <div class="dropdown show" v-if="nickName">
+          <a href="javascript:void(0)" class="navbar-link dropdown-toggle" >{{ nickName }} 的账户</a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <router-link class="dropdown-item" :to="{
+              path: '/address',
+              query: {
+                manage: 'add'
+              }
+            }">管理地址</router-link>
+            <router-link class="dropdown-item" to="/orderList">查看订单</router-link>
+            <div class="dropdown-divider"></div>
+            <a href="javascript:void(0)" class="dropdown-item" @click.stop="logOut">退出</a>
+          </div>
+        </div>
         <span class="navbar-link"></span>
+
         <a href="javascript:void(0)" class="navbar-link" v-if="!nickName" @click="loginModalFlag=true">登录</a>
         <a href="javascript:void(0)" class="navbar-link" v-if="!nickName" @click="registerModalFlag=true">注册</a>
-        <a href="javascript:void(0)" class="navbar-link" v-if="nickName" @click.stop="logOut">退出</a>
         <div class="navbar-cart-container">
           <span class="navbar-cart-count" v-if="cartCount">{{ cartCount }}</span>
           <a class="navbar-link navbar-cart-link" href="/cart">
@@ -232,12 +246,15 @@ export default {
     align-items: center;
     margin-left: -20px;
   }
-  .navbar-brand-logo {
-    /*width: 120px;*/
+  .navbar-brand-logo{
+    height: 70px;
   }
   .header a, .footer a {
     color: #666;
     text-decoration: none;
+  }
+  .dropdown:hover .dropdown-menu{
+    display: block;
   }
   a {
     -webkit-transition: color .3s ease-out;

@@ -435,7 +435,6 @@ a:hover {
   background: #f0f0f0;
 }
 
-
 /** 面包屑 **/
 .nav-breadcrumb {
   padding: 10px 0;
@@ -1246,6 +1245,17 @@ html {
   .md-modal .md-close {
     display: none;
   }
+  
+  .md-modal .md-title{
+    position: relative;
+    text-align: center;
+  }
+
+  .md-content .btn-login{
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+  }
 
   .md-modal .md-tit {
     padding: 0 15px;
@@ -1285,6 +1295,8 @@ html {
     display: -ms-flexbox;
     display: flex;
     margin-top: 0;
+    align-items: center;
+    justify-content: center;
   }
 
   .md-modal .btn-wrap .btn {
@@ -1295,11 +1307,11 @@ html {
     width: 100%;
     margin: 0;
     font-size: 12px;
+    
   }
 
   .md-modal .btn-wrap .btn:first-child {
-    border-left: none;
-    border-right: none;
+    margin-bottom: 10px;
   }
 
   .md-modal.modal-normal .content-tit {

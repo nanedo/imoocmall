@@ -24,14 +24,14 @@
 
       <!-- search result accessories list -->
       <div class="accessory-list-wrap">
-        <div class="accessory-list col-4">
+        <div class="accessory-list column-4">
           <ul>
             <li v-for="(item, index) in goodsList" :key="index">
               <div class="pic">
                   <!-- 请求后台的静态页面
                 <a :href="'/api/goods/product/'+item.productId" target="_blank"><img v-lazy="'/static/' + item.productImage" alt=""></a> -->
                 <!-- 前端渲染页面 -->
-                <a :href="'/goods/'+item.productId" target="_blank"><img v-lazy="'/static/' + item.productImage" alt=""></a>
+                <a :href="'/goods/'+item.productId" target="_blank"><img v-lazy="'' + item.productImage" alt=""></a>
               </div>
               <div class="main">
                 <div class="name">{{ item.productName }}</div>

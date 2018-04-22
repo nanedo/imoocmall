@@ -44,7 +44,7 @@
               <h2 class="page-title-h2"><span>付款</span></h2>
             </div>
             <!-- process step -->
-            <div class="check-step">
+            <div class="check-step" v-if="!$route.query.manage">
               <ul>
                 <li class="cur"><span>确认</span> 收货地址</li>
                 <li><span>查看</span> 订单</li>
@@ -60,19 +60,19 @@
             <div class="addr-list-wrap">
               <div class="addr-list">
                 <ul>
-                  <li v-for="(item,index) in addressListFilter" v-bind:class="{'check':checkIndex==index}" @click="checkIndex=index;selectedAddrId=item.addressId" :key="index" >
+                  <li v-for="(item,index) in addressListFilter" v-bind:class="{'check':checkIndex==index}" @click="checkIndex=index;selectedAddrId=item.id" :key="index" >
                     <dl>
-                      <dt>{{item.userName}}</dt>
-                      <dd class="address">{{item.streetName}}</dd>
-                      <dd class="tel">{{item.tel}}</dd>
+                      <dt>{{item.receiver_name}}</dt>
+                      <dd class="address">{{item.receiver_province + item.receiver_city + item.receiver_address}}</dd>
+                      <dd class="tel">{{item.receiver_mobile}}</dd>
                     </dl>
                     <div class="addr-opration addr-del">
-                      <a href="javascript:;" class="addr-del-btn" @click="delAddressConfirm(item.addressId)">
+                      <a href="javascript:;" class="addr-del-btn" @click="delAddressConfirm(item.id)">
                         <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
                       </a>
                     </div>
                     <div class="addr-opration addr-set-default">
-                      <a href="javascript:;" class="addr-set-default-btn" v-if="!item.isDefault" @click="setDefault(item.addressId)"><i>设置为默认</i></a>
+                      <a href="javascript:;" class="addr-set-default-btn" v-if="!item.isDefault" @click="setDefault(item.id)"><i>设置为默认</i></a>
                     </div>
                     <div class="addr-opration addr-default" v-if="item.isDefault">默认地址</div>
                   </li>
@@ -87,7 +87,7 @@
                 </ul>
               </div>
 
-              <div class="shipping-addr-more">
+              <div class="shipping-addr-more" v-if="addressList.length > limit">
                 <a class="addr-more-btn up-down-btn" href="javascript:;" @click="expand" v-bind:class="{'open':limit>3}">
                   更多
                   <i class="i-up-down">
@@ -115,7 +115,7 @@
                 </ul>
               </div>
             </div>
-            <div class="next-btn-wrap">
+            <div class="next-btn-wrap" v-if="!$route.query.manage">
               <router-link class="btn btn--m btn--red" v-bind:to="{path:'orderConfirm',query:{'addressId':selectedAddrId}}">下一步</router-link>
             </div>
           </div>
@@ -142,7 +142,23 @@
                 </li>
                 <li class="regi_form_input">
                 <i class="icon IconText">联系电话</i>
-                <input type="text" tabindex="2" v-model="newAddress.tel" class="regi_login_input regi_login_input_left" placeholder="手机号码">
+                <input type="text" tabindex="2" v-model="newAddress.mobile" class="regi_login_input regi_login_input_left" placeholder="手机号码">
+                </li>
+                <li class="regi_form_input noMargin">
+                <i class="icon IconText">固定电话</i>
+                <input type="text" tabindex="4"   v-model="newAddress.tel" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="固定电话">
+                </li>
+                <li class="regi_form_input noMargin">
+                <i class="icon IconText">省份</i>
+                <input type="text" tabindex="4"   v-model="newAddress.province" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="省份">
+                </li>
+                <li class="regi_form_input noMargin">
+                <i class="icon IconText">地级市</i>
+                <input type="text" tabindex="4"   v-model="newAddress.city" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="地级市">
+                </li>
+                <li class="regi_form_input noMargin">
+                <i class="icon IconText">区县</i>
+                <input type="text" tabindex="4"   v-model="newAddress.district" class="regi_login_input regi_login_input_left login-input-no input_text" placeholder="区县">
                 </li>
                 <li class="regi_form_input">
                 <i class="icon IconText">联系地址</i>
@@ -187,6 +203,10 @@ export default {
       isMdShow: false,
       addressId: '',
       newAddress: {
+        province: '',
+        city: '',
+        district: '',
+        mobile: '',
         userName: '',
         streetName: '',
         postCode: '',
@@ -211,7 +231,7 @@ export default {
           let data = res.data
           if (data.status === '0') {
             this.addressList = data.result
-            this.selectedAddrId = this.addressList[0].addressId
+            this.selectedAddrId = this.addressList[0].id
           } else if (data.status === '2') {
             eventBus.$emit('unLogin', () => {
               this.init()
@@ -270,15 +290,23 @@ export default {
       let streetName = this.newAddress.streetName
       let tel = this.newAddress.tel
       let postCode = this.newAddress.postCode
+      let mobile = this.newAddress.mobile
+      let province = this.newAddress.province
+      let city = this.newAddress.city
+      let district = this.newAddress.district
 
-      if (!userName || !streetName || !tel) {
+      if (!userName || !streetName || !tel || !mobile || !province || !city || !district) {
         this.errorTip = '缺少必要的信息，请补充完整'
       } else {
         this.$http.post('/api/users/addAddress', {
           userName,
           streetName,
           tel,
-          postCode
+          postCode,
+          province,
+          city,
+          district,
+          mobile
         }).then((res) => {
           if (res.data.status === '0') {
             this.closeAddModal()

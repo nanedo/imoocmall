@@ -33,97 +33,32 @@
           <ul>
             <li class="cur"><span>确认</span> 收货地址</li>
             <li class="cur"><span>查看</span> 订单</li>
-            <li><span>在线</span> 支付</li>
+            <li class="cur"><span>在线</span> 支付</li>
             <li><span>订单</span> 详情</li>
           </ul>
         </div>
 
-        <!-- order list -->
-        <div class="page-title-normal checkout-title">
-          <h2><span>订单内容</span></h2>
-        </div>
-        <div class="item-list-wrap confirm-item-list-wrap">
-          <div class="cart-item order-item">
-            <div class="cart-item-head">
-              <ul>
-                <li>订单内容</li>
-                <li>价格</li>
-                <li>数量</li>
-                <li>总价</li>
-              </ul>
-            </div>
-            <ul class="cart-item-list">
-              <li v-for="(item, index) in cartList" v-if="item.checked=='1'" :key="index">
-                <div class="cart-tab-1">
-                  <div class="cart-item-pic">
-                    <img v-lazy="''+item.productImage" :alt="item.productName">
-                  </div>
-                  <div class="cart-item-title">
-                    <div class="item-name">{{item.productName}}</div>
-
-                  </div>
-                </div>
-                <div class="cart-tab-2">
-                  <div class="item-price">{{item.salePrice|currency('¥')}}</div>
-                </div>
-                <div class="cart-tab-3">
-                  <div class="item-quantity">
-                    <div class="select-self">
-                      <div class="select-self-area">
-                        <span class="select-ipt">{{item.productNum}}</span>
-                      </div>
-                    </div>
-                    <div class="item-stock item-stock-no">有库存</div>
-                  </div>
-                </div>
-                <div class="cart-tab-4">
-                  <div class="item-price-total">{{(item.salePrice*item.productNum)|currency('¥')}}</div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Price count -->
-        <div class="price-count-wrap">
-          <div class="price-count">
-            <ul>
-              <li>
-                <span>商品总价:</span>
-                <span>{{subTotal|currency('¥')}}</span>
-              </li>
-              <li>
-                <span>运费:</span>
-                <span>{{shipping|currency('¥')}}</span>
-              </li>
-              <li>
-                <span>折扣:</span>
-                <span>{{discount|currency('¥')}}</span>
-              </li>
-              <li>
-                <span>税费:</span>
-                <span>{{tax|currency('¥')}}</span>
-              </li>
-              <li class="order-total-price">
-                <span>订单总价:</span>
-                <span>{{orderTotal|currency('¥')}}</span>
-              </li>
-            </ul>
-          </div>
+        <!-- 订单支付 -->
+        <div class="onlinePay row">
+          <div class="col-md-6 col-xs-12"><BankChooser @on-change="getBank" /></div>
+          <div class="col-md-7 col-xs-12"><button @click="payMent" class="btn btn-important ">支 付</button></div>
         </div>
 
         <div class="order-foot-wrap">
           <div class="prev-btn-wrap">
-            <router-link class="btn btn--m" to="/address">上一步</router-link>
           </div>
           <div class="next-btn-wrap">
-            <button class="btn btn--m btn--red" @click="showPayment">支付订单</button>
+            <router-link class="btn btn--m" :to="{
+            path: '/orderSuccess',
+            query: {
+              orderId: $route.query.orderId
+            }
+          }">查看订单</router-link>
           </div>
         </div>
       </div>
     </div>
     <footer-component />
-    <order-payment :isShow="isShow" @close="hidePayment" :reqParams="reqParams" />
   </div>
 </template>
 
@@ -131,7 +66,7 @@
 import HeaderComponent from '../components/header'
 import FooterComponent from '../components/footer'
 import NavBread from '../components/NavBread'
-import OrderPayment from '@/components/payment'
+import BankChooser from '@/components/bankChooser'
 
 import {eventBus} from '../eventBus'
 
@@ -140,7 +75,7 @@ export default {
     HeaderComponent,
     FooterComponent,
     NavBread,
-    OrderPayment
+    BankChooser
   },
   data () {
     return {
@@ -148,11 +83,9 @@ export default {
       subTotal: 0,
       shipping: 100,
       discount: 200,
+      reqParams: {},
       tax: 400,
-      isShow: false,
-      reqParams: {
-        addressId: this.$route.query.addressId
-      }
+      orderid: ''
     }
   },
   computed: {
@@ -165,54 +98,60 @@ export default {
   },
   methods: {
     init () {
-      this.$http.get('/api/users/cartList')
-        .then((res) => {
-          let data = res.data
-          if (data.status === '0') {
-            this.cartList = data.result
-            this.cartList.forEach((item) => {
-              if (item.checked === '1') {
-                this.subTotal += item.salePrice * item.productNum
-              }
-            })
-          } else if (data.status === '2') {
-            eventBus.$emit('unLogin', () => {
-              this.init()
-            }, {
-              clickBgClose: false,
-              hideClose: true
-            })
-          } else {
-            eventBus.$emit('showMsg', data.msg)
-          }
-        }, (err) => {
-          eventBus.$emit('showMsg', err)
+      this.orderid = this.$route.query.orderId
+      if (!this.orderid) {
+        this.$router.push({
+          path: '/'
         })
-    },
-    payMent () {
-      let addressId = this.$route.query.addressId
-
-      this.$http.post('/api/users/payMent', {
-        addressId,
-        orderTotal: this.orderTotal
+        return false
+      }
+      this.$http.post('/api/users/orderDetail', {
+        orderId: this.orderid
       }).then((res) => {
-        if (res.data.status === '0') {
-          this.$router.push({
-            path: '/orderSuccess',
-            query: {
-              orderId: res.data.result.orderId
-            }
+        let data = res.data
+        if (data.status === '0') {
+          if (data.result.status !== 10) {
+            eventBus.$emit('showMsg', '订单非未付款状态~')
+            setTimeout(() => {
+              this.$router.push({
+                path: '/'
+              })
+            }, 5000)
+          }
+        } else if (data.status === '2') {
+          eventBus.$emit('unLogin', () => {
+            this.init()
+          }, {
+            clickBgClose: false,
+            hideClose: true
           })
         } else {
-          eventBus.$emit('showMsg', res.data.msg)
+          eventBus.$emit('showMsg', data.msg)
         }
-      }, err => eventBus.$emit('showMsg', err))
+      }, (err) => {
+        eventBus.$emit('showMsg', err)
+      })
     },
-    showPayment () {
-      this.isShow = true
+    payMent () {
+      if (window.confirm('是否支付 ' + this.orderid + ' 这个订单？')) {
+        this.$http.post('/api/users/payMent', {
+          orderid: this.orderid
+        }).then((res) => {
+          if (res.data.status === '0') {
+            this.$router.push({
+              path: '/orderSuccess',
+              query: {
+                orderId: res.data.result.orderId
+              }
+            })
+          } else {
+            eventBus.$emit('showMsg', res.data.msg)
+          }
+        }, err => eventBus.$emit('showMsg', err))
+      }
     },
-    hidePayment () {
-      this.isShow = false
+    getBank (bankid) {
+      this.reqParams.bankid = bankid
     }
   }
 }
